@@ -250,20 +250,24 @@ namespace DeadLineApp_v2._0
                 valueClass.Name ="Этап не найден";
                 valueClass.DeadlineName = "Дедлайн не найден";
             }
-            if(valueClass.timeNotification!="Ничего")
+            try
             {
-                
-                string[] time = valueClass.timeNotification.Replace(':', ' ').Split();
-                int nHours = Convert.ToInt32(time[0]);
-                int nMinutes = Convert.ToInt32(time[1]);
-                if(DateTime.Now.Hour==nHours&&DateTime.Now.Minute==nMinutes)
+                if (valueClass.timeNotification != "Ничего")
                 {
-                    speech.SpeakAsync("Проверьте свои дедлайны! Работа ждет!");
-                    speech.Resume();
-                    Thread.Sleep(3000);
-                    speech.Pause();
+
+                    string[] time = valueClass.timeNotification.Replace(':', ' ').Split();
+                    int nHours = Convert.ToInt32(time[0]);
+                    int nMinutes = Convert.ToInt32(time[1]);
+                    if (DateTime.Now.Hour == nHours && DateTime.Now.Minute == nMinutes)
+                    {
+                        speech.SpeakAsync("Проверьте свои дедлайны! Работа ждет!");
+                        speech.Resume();
+                        Thread.Sleep(3000);
+                        speech.Pause();
+                    }
                 }
             }
+            catch { }
             if (kek.Days == 0 && kek.Hours == 0 && kek.Minutes == 0 && kek.Seconds == 0||kek.Days < 0 || kek.Hours < 0 || kek.Minutes < 0 || kek.Seconds < 0)
             {
                 try
