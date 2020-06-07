@@ -373,5 +373,11 @@ namespace DeadLineApp_v2._0
 
             }
         }
+
+        private void помощьToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            this.WindowState = FormWindowState.Normal;
+            iconButtonHelp.PerformClick();
+        }
     }
 }
