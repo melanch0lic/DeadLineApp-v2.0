@@ -20,6 +20,7 @@ namespace DeadLineApp_v2._0
     {
         FormDeadLine frm = new FormDeadLine();
         FormOptions frmOpt = new FormOptions();
+        FormHelp frmHelp = new FormHelp();
         private IconButton currentBtn;
         private Panel leftBorderBtn;
         public Form currentChildForm;
@@ -236,7 +237,7 @@ namespace DeadLineApp_v2._0
         private void iconButtonHelp_Click(object sender, EventArgs e)
         {
             ActivateButton(sender, RGBColors.color3);
-            OpenChildForm(new FormHelp());
+            OpenChildForm(frmHelp);
         }
 
         private void iconButtonOptions_Click(object sender, EventArgs e)

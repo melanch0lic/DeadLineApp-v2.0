@@ -88,6 +88,7 @@
             this.richTextBoxHelp.ForeColor = System.Drawing.Color.Black;
             this.richTextBoxHelp.Location = new System.Drawing.Point(71, 77);
             this.richTextBoxHelp.Name = "richTextBoxHelp";
+            this.richTextBoxHelp.ReadOnly = true;
             this.richTextBoxHelp.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
             this.richTextBoxHelp.Size = new System.Drawing.Size(487, 440);
             this.richTextBoxHelp.TabIndex = 16;
