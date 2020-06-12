@@ -18,6 +18,7 @@ namespace DeadLineApp_v2._0
         {
             InitializeComponent();
         }
+        //Таймер отображения текущего времени и времени до ближайшего Дедлайна
         private void timer1_Tick(object sender, EventArgs e)
         {
             label1.Text = DateTime.Now.ToLongTimeString();

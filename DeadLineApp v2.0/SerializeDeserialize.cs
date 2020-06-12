@@ -8,6 +8,7 @@ using System.Xml.Serialization;
 
 namespace DeadLineApp_v2._0
 {
+    //Класс для Сериализации
     [Serializable]
     public static class SerializeDeserialize
     {

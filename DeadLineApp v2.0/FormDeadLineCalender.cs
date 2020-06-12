@@ -10,21 +10,43 @@ namespace DeadLineApp_v2._0
     public partial class FormDeadLine : Form
     {
         SpeechSynthesizer speech;
+        //Массив для разделения даты на дни,часы,минуты
         string[] mas;
+
+        //Переменные для хранения данных о выделенном этапе
         int year = 2001;
         int month = 02;
         int day = 25;
         int hours = 10;
         int minutes = 10;
+
+        //Переменная для хранения добавляемой даты
         DateTime datetime;
+
+        //Переменная для передачи даты в компонент textBoxDateEdit
         DateTime date = new DateTime();
+
+        //Список хранения Часов этапов Дедлайна
         public List<string> Hours = new List<string>();
+
+        //Список хранения Минут этапов Дедлайна
         public List<string> Minutes = new List<string>();
+
+        //Список хранения Дат этапов Дедлайна
         public List<string> Dates = new List<string>();
+
+        //Список хранения Названий этапов Дедлайна
         public List<string> Names = new List<string>();
+
+        //Список хранения Названий Дедлайнов
         public List<string> DeadlineNames = new List<string>();
+
+        //Переменная для хранения индекса,выделенного этапа
         public int i = 0;
+
         private FormSecond frm2;
+
+        //Переменные для хранения даты и времени ближайшего этапа
         public int xDay = 32;
         public int xMonth = 13;
         public int xYear = 4000;
@@ -37,29 +59,33 @@ namespace DeadLineApp_v2._0
         }
 
 
+        /*При нажатии на кнопку открывается окно FormSecond откуда данные передаются в статический класс valueClass и добавляются в списки хранения часов,минут,дат и названий.*/
         private void buttonWindowAdd_Click(object sender, EventArgs e)
         {
             frm2 = new FormSecond();
             frm2.ShowDialog();
             try
             {
+                //Проверка на ввод
                 if (frm2.textBoxDate.Text != "" && frm2.comboBoxHours.Text != "" && frm2.comboBoxMinutes.Text != "" && frm2.textBoxNameOfStep.Text != "")
                 {
-                    Dates.Add(valueClass.Date);
-                    Hours.Add(valueClass.Hours);
-                    Minutes.Add(valueClass.Minutes);
+                    Dates.Add(valueClass.Date);//Добавление даты в список Дат
+                    Hours.Add(valueClass.Hours);//Добавление часов в список Часов
+                    Minutes.Add(valueClass.Minutes);//Добавление минут в список Минут
                     mas = Dates[i].Replace('.', ' ').Split();
                     datetime = new DateTime(Convert.ToInt32(mas[2]), Convert.ToInt32(mas[1]), Convert.ToInt32(mas[0]));
                     string[] DateB = valueClass.Date.Replace('.', ' ').Split();
                     int DayB = Convert.ToInt32(DateB[0]);
                     int MonthB = Convert.ToInt32(DateB[1]);
                     int YearB = Convert.ToInt32(DateB[2]);
+                    //Добавление выделенной даты в компонент monthCalendarDeadLine
                     monthCalendarDeadLine.AddBoldedDate(new DateTime(YearB, MonthB, DayB));
                     monthCalendarDeadLine.UpdateBoldedDates();
                     listBoxDeadLine.Items.Add(frm2.textBoxNameOfStep.Text);
                     Names.Add(frm2.textBoxNameOfStep.Text);
                     DeadlineNames.Add(frm2.textBoxDeadlineName.Text);
                     frm2.Close();
+                    //Поиск ближайшего этапа дедлайна
                     for (int i = 0; i < Dates.Count; i++)
                     {
                         try
@@ -152,6 +178,7 @@ namespace DeadLineApp_v2._0
                     }
                 }
             }
+            //catch при вводе неправильной даты
             catch
             {
                 MessageBox.Show("Введите дату правильно!");
@@ -162,10 +189,9 @@ namespace DeadLineApp_v2._0
             }
         }
 
+        //При запуске формы в листбокс добавляются названия которые были сохранены в xml файл. И в monthCalendarDeadLine выделяются даты
         private void FormDeadLine_Load(object sender, EventArgs e)
         {
-            VoiceInfo info = speech.Voice;
-            speech.SelectVoice(info.Name);
             foreach (string el in Names)
             {
                 listBoxDeadLine.Items.Add(el);
@@ -208,8 +234,10 @@ namespace DeadLineApp_v2._0
             
         }
 
+        //Таймер для звукового оповещения и отображения времени, которое осталось до этапа
         private void timerDeadLine_Tick(object sender, EventArgs e)
         {
+            //Проверка пуст ли листбокс
             if (listBoxDeadLine.Items.Count > 0)
             {
                 mas = Dates[i].Replace('.', ' ').Split();
@@ -223,7 +251,8 @@ namespace DeadLineApp_v2._0
             string hourText;
             string minuteText;
             DateTime b = new DateTime(year: year, month: month, day: day, hour: hours, minute: minutes, second: 0);
-            TimeSpan kek = b - DateTime.Now;
+            TimeSpan kek = b - DateTime.Now;//Интервал времени до этапа Дедлайна
+            //Условия для смены окончания слов
             if (kek.Days % 10 == 1 && kek.Days != 11)
                 dayText = "День";
             else if (kek.Days % 10 < 5 && kek.Days % 10 >= 2 && kek.Days / 10 != 1)
@@ -241,25 +270,34 @@ namespace DeadLineApp_v2._0
             else if (kek.Minutes % 10 < 5 && kek.Minutes % 10 >= 2 && kek.Minutes / 10 != 1)
                 minuteText = "Минуты";
             else minuteText = "Минут";
+
+            //Отображение времени в labelTIme
             String.Format("{0:00}:{1:00}:{2:00}:{3:00}", kek.Days, kek.Hours, kek.Minutes, kek.Seconds);
             labelTIme.Text = "Осталось: " + String.Format("{0:00}" + " " + dayText + " " + "{1:00}" + " " + hourText + " " + "{2:00}" + " " + minuteText, kek.Days, kek.Hours, kek.Minutes);
             valueClass.TimeUntil = labelTIme.Text;
+
+            //Если листбокс пуст
             if (listBoxDeadLine.Items.Count == 0)
             {
                 valueClass.TimeUntil = "Осталось: Этап не найден";
                 valueClass.Name ="Этап не найден";
                 valueClass.DeadlineName = "Дедлайн не найден";
             }
+            
             try
             {
+                //Звуковые оповещения, которые настраиваются в вкладке  Options
                 if (valueClass.timeNotification != "Ничего")
                 {
 
                     string[] time = valueClass.timeNotification.Replace(':', ' ').Split();
                     int nHours = Convert.ToInt32(time[0]);
                     int nMinutes = Convert.ToInt32(time[1]);
+
+                    //Условие проверки на равенство поставленного времени в настройках с текущим
                     if (DateTime.Now.Hour == nHours && DateTime.Now.Minute == nMinutes)
                     {
+                        //Воспроизведение речи
                         speech.SpeakAsync("Проверьте свои дедлайны! Работа ждет!");
                         speech.Resume();
                         Thread.Sleep(3000);
@@ -267,7 +305,10 @@ namespace DeadLineApp_v2._0
                     }
                 }
             }
+
             catch { }
+
+            //Проверка вышло ли время этапа Дедлайна, или нет
             if (kek.Days == 0 && kek.Hours == 0 && kek.Minutes == 0 && kek.Seconds == 0||kek.Days < 0 || kek.Hours < 0 || kek.Minutes < 0 || kek.Seconds < 0)
             {
                 try
@@ -276,20 +317,26 @@ namespace DeadLineApp_v2._0
                     int DayB = Convert.ToInt32(DateB[0]);
                     int MonthB = Convert.ToInt32(DateB[1]);
                     int YearB = Convert.ToInt32(DateB[2]);
-                    monthCalendarDeadLine.RemoveBoldedDate(new DateTime(YearB, MonthB, DayB));
+                    monthCalendarDeadLine.RemoveBoldedDate(new DateTime(YearB, MonthB, DayB));//Удаление выделенной даты из компонента monthCalendarDeadLine
+                    //Проверка включено ли звуковое уведомление об окончании этапа
                     if (valueClass.flag==true)
                     {
+                        //Воспроизведение речи
                         speech.SpeakAsync("Время этапа " + Names[i] + " из Дедлайна " +DeadlineNames[i]+" вышло! ");
                         speech.Resume();
                         Thread.Sleep(5000);
                         speech.Pause();
                     }
+
+                    //Удаление данных об этапе из списков
                     Dates.RemoveAt(i);
                     Hours.RemoveAt(i);
                     Minutes.RemoveAt(i);
                     Names.RemoveAt(i);
                     DeadlineNames.RemoveAt(i);
                     listBoxDeadLine.Items.RemoveAt(i);
+
+                    //Обновление выделенных дат в компоненте monthDeadLineCalendar
                     foreach (string item in Dates)
                     {
                         string[] DateG = item.Replace('.', ' ').Split();
@@ -298,6 +345,7 @@ namespace DeadLineApp_v2._0
                         int YearG = Convert.ToInt32(DateG[2]);
                         monthCalendarDeadLine.AddBoldedDate(new DateTime(YearG, MonthG, DayG));
                     }
+
                     labelTIme.Hide();
                     labelInfoStep.Hide();
                     labelNameEdit.Hide();
@@ -321,6 +369,8 @@ namespace DeadLineApp_v2._0
                 xYear = 4000;
                 xHours = 24;
                 xMinutes = 61;
+
+                //Поиск ближайшего этапа Дедлайна и выделение его
                 for (int i = 0; i < Dates.Count; i++)
                 {
                     try
@@ -401,6 +451,7 @@ namespace DeadLineApp_v2._0
                     }
                     catch { }
                 }
+                //Если листбокс не пуст записываем названия Дедлайна и этапа Дедлайна в переменные статического класса
                 if (listBoxDeadLine.Items.Count != 0)
                 {
                     valueClass.Name = Names[valueClass.minIndex];
@@ -409,11 +460,13 @@ namespace DeadLineApp_v2._0
                 valueClass.minIndex++;
             }
         }
+
+        //Событие изменения индекса в листбоксе
         private void listBoxDeadLine_SelectedIndexChanged(object sender, EventArgs e)
         {
             try
             {
-                i = listBoxDeadLine.SelectedIndex;
+                i = listBoxDeadLine.SelectedIndex;//В переменную записываем индекс выделенного этапа
                 mas = Dates[i].Replace('.', ' ').Split();
                 year = Convert.ToInt32(mas[2]);
                 month = Convert.ToInt32(mas[1]);
@@ -421,11 +474,14 @@ namespace DeadLineApp_v2._0
                 hours = Convert.ToInt32(Hours[i]);
                 minutes = Convert.ToInt32(Minutes[i]);
                 labelTIme.Show();
+                
+                //Отображение данных о выделенном этапе в текстбоксах и комбобоксах
                 comboBoxHoursEdit.Text = String.Format("{0:00}", hours);
                 comboBoxMinutesEdit.Text = String.Format("{0:00}", minutes);
                 textBoxNameEdit.Text = listBoxDeadLine.SelectedItem.ToString();
                 textBoxDeadlineNameEdit.Text = DeadlineNames[i];
                 textBoxDateEdit.Text = day.ToString() + "." + month.ToString() + "." + year.ToString();
+
                 labelInfoStep.Show();
                 labelNameEdit.Show();
                 labelDateEdit.Show();
@@ -448,12 +504,16 @@ namespace DeadLineApp_v2._0
                 i++;
             }
         }
+
+        //Событие клика на кнопку "Редактировать"
         private void buttonEdit_Click_1(object sender, EventArgs e)
         {
+            //Изменение данных введенных в текстбоксы и комбобоксы
             Dates[i] = textBoxDateEdit.Text;
             Hours[i] = comboBoxHoursEdit.Text;
             Minutes[i] = comboBoxMinutesEdit.Text;
-            monthCalendarDeadLine.RemoveAllBoldedDates();
+            monthCalendarDeadLine.RemoveAllBoldedDates();//Удаление всех выделенных дат в компоненте monthCalendar
+            //Добавление дат из списка Dates для выделения в monthCalendar
             foreach (string item in Dates)
             {
                 string[] DateB = item.Replace('.', ' ').Split();
@@ -464,16 +524,21 @@ namespace DeadLineApp_v2._0
             }
             hours = Convert.ToInt32(Hours[i]);
             minutes = Convert.ToInt32(Minutes[i]);
+
             labelTIme.Show();
-            monthCalendarDeadLine.UpdateBoldedDates();
+            monthCalendarDeadLine.UpdateBoldedDates();//Обновление выделенных дат
         }
 
+        //Событие клика на кнопку "Удалить"
         private void buttonDelete_Click_1(object sender, EventArgs e)
         {
+            //Выделенная дата
             string[] DateB = Dates[i].Replace('.', ' ').Split();
             int DayB = Convert.ToInt32(DateB[0]);
             int MonthB = Convert.ToInt32(DateB[1]);
-            int YearB = Convert.ToInt32(DateB[2]);      
+            int YearB = Convert.ToInt32(DateB[2]);
+
+            //Удаление данных из списков и выделенной даты компонента monthDeadLineCalendar
             monthCalendarDeadLine.RemoveBoldedDate(new DateTime(YearB, MonthB, DayB));
             Dates.RemoveAt(i);
             Hours.RemoveAt(i);
@@ -481,6 +546,7 @@ namespace DeadLineApp_v2._0
             Names.RemoveAt(i);
             DeadlineNames.RemoveAt(i);
             listBoxDeadLine.Items.RemoveAt(i);
+            //Добавление дат из списка Dates для выделения в monthCalendar
             foreach (string item in Dates)
             {
                 string[] DateG = item.Replace('.', ' ').Split();
@@ -489,6 +555,7 @@ namespace DeadLineApp_v2._0
                 int YearG = Convert.ToInt32(DateG[2]);
                 monthCalendarDeadLine.AddBoldedDate(new DateTime(YearG, MonthG, DayG));
             }
+
             labelTIme.Hide();
             labelInfoStep.Hide();
             labelNameEdit.Hide();
@@ -505,8 +572,10 @@ namespace DeadLineApp_v2._0
             buttonDelete.Hide();
             dateTimePickerDateDeadLine.Hide();         
             monthCalendarDeadLine.UpdateBoldedDates();
+            //Если листбокс не пуст
             if(listBoxDeadLine.Items.Count>0)
             {
+                //Поиск ближайшего этапа  Дедлайна
                 for (int i = 0; i < Dates.Count; i++)
                 {
                     try
@@ -588,18 +657,22 @@ namespace DeadLineApp_v2._0
                     catch { }
                 }
             }
+            //Если листбокс пуст то записываем в переменные статического класса значения
             else
-            { valueClass.Name = "Этап не найден";
+            {   
+                valueClass.Name = "Этап не найден";
                 valueClass.DeadlineName = "Дедлайн не найден";
             }
         }
 
+        //Выбор даты из dateTimePicker в textBoxDateEdit
             private void dateTimePickerDateDeadLine_ValueChanged(object sender, EventArgs e)
             {
                 date = dateTimePickerDateDeadLine.Value.Date;
                 textBoxDateEdit.Text = date.ToShortDateString();
             }
 
+        //Таймер который каждые 5 минут выделяет ближайший этап в листбоксе
             private void timerAlert_Tick(object sender, EventArgs e)
             {
                 bool flag = true;

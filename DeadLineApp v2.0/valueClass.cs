@@ -2,6 +2,7 @@
 
 namespace DeadLineApp_v2._0
 {
+    //Статический класс для передачи данных между формами
    static class valueClass
     {
         public static string Date = string.Empty;
