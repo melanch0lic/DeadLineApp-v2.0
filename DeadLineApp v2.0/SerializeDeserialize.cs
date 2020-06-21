@@ -1,14 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml.Serialization;
 
 namespace DeadLineApp_v2._0
 {
-    //Класс для Сериализации
+    //Класс для Сериализации/Десериализации 
     [Serializable]
     public static class SerializeDeserialize
     {

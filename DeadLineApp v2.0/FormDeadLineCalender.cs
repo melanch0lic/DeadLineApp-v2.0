@@ -44,6 +44,10 @@ namespace DeadLineApp_v2._0
         //Переменная для хранения индекса,выделенного этапа
         public int i = 0;
 
+        //переменные для хранения названий
+        string namez;
+        string deadnamez;
+
         private FormSecond frm2;
 
         //Переменные для хранения даты и времени ближайшего этапа
@@ -233,7 +237,22 @@ namespace DeadLineApp_v2._0
             monthCalendarDeadLine.UpdateBoldedDates();
             
         }
-
+        //Функция для потока 
+        public void myThread()
+        {
+            speech.SpeakAsync("Время этапа " + namez + " из Дедлайна " + deadnamez + " вышло! ");
+            speech.Resume();
+            Thread.Sleep(5000);
+            speech.Pause();
+        }
+        //Функция для потока 
+        public void myThreadAlert()
+        {
+            speech.SpeakAsync("Проверьте свои дедлайны! Работа ждет!");
+            Thread.Sleep(59000);
+            speech.Resume();
+            speech.Pause();
+        }
         //Таймер для звукового оповещения и отображения времени, которое осталось до этапа
         private void timerDeadLine_Tick(object sender, EventArgs e)
         {
@@ -298,16 +317,13 @@ namespace DeadLineApp_v2._0
                     if (DateTime.Now.Hour == nHours && DateTime.Now.Minute == nMinutes)
                     {
                         //Воспроизведение речи
-                        speech.SpeakAsync("Проверьте свои дедлайны! Работа ждет!");
-                        speech.Resume();
-                        Thread.Sleep(3000);
-                        speech.Pause();
+                        Thread thread2 = new Thread(myThreadAlert);
+                        thread2.Start();
                     }
                 }
             }
 
             catch { }
-
             //Проверка вышло ли время этапа Дедлайна, или нет
             if (kek.Days == 0 && kek.Hours == 0 && kek.Minutes == 0 && kek.Seconds == 0||kek.Days < 0 || kek.Hours < 0 || kek.Minutes < 0 || kek.Seconds < 0)
             {
@@ -321,11 +337,11 @@ namespace DeadLineApp_v2._0
                     //Проверка включено ли звуковое уведомление об окончании этапа
                     if (valueClass.flag==true)
                     {
+                        namez = Names[i];
+                        deadnamez = DeadlineNames[i];
                         //Воспроизведение речи
-                        speech.SpeakAsync("Время этапа " + Names[i] + " из Дедлайна " +DeadlineNames[i]+" вышло! ");
-                        speech.Resume();
-                        Thread.Sleep(5000);
-                        speech.Pause();
+                        Thread thread1 = new Thread(myThread);
+                        thread1.Start();
                     }
 
                     //Удаление данных об этапе из списков

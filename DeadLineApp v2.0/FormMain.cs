@@ -1,17 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.IO;
-using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Xml.Serialization;
 using FontAwesome.Sharp;
 
 namespace DeadLineApp_v2._0
@@ -49,7 +42,7 @@ namespace DeadLineApp_v2._0
             public static Color color6 = Color.FromArgb(20, 30, 48);
         }
         
-        //Округление углов Окна приложения
+        //Функция для округление углов Окна приложения
         public static GraphicsPath RoundedRect(Rectangle baseRect, int radius)
         {
             var diameter = radius * 2;
